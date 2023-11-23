@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# To display numbers from 1 to 20 except:
+#   "bad luck from China" next to line 4th
+#   "bad luck from Japan" next to line 9th
+#   "bad luck from Italy" next to line 17th
+
+c=1
+
+while [ $c -le 20 ]
+do
+  echo "$c"
+  case $c in
+    "4") echo "bad luck from China";;
+    "9") echo "bad luck from Japan";;
+    "17") echo "bad luck from Italy";;
+  esac
+  (( c++ ))
+done
