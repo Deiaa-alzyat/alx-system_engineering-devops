@@ -22,33 +22,25 @@
 #   Outputs "Usage: manage_my_process {start|stop|restart}."
 
 
-if [ "${1}" == "start" ]; then
+if [ "${1}" == "start" ]
+then
     ./manage_my_process &
+    touch /var/run/my_process.pid
     echo "$!" > /var/run/my_process.pid
     echo "manage_my_process started"
-elif [ "${1}" == "stop" ]; then
-    if [ -e "/var/run/my_process.pid" ]; then
-        PID=$(cat /var/run/my_process.pid)
-        kill "${PID}"
-        rm /var/run/my_process.pid
-        echo "manage_my_process stopped"
-    else
-        echo "No running process found. manage_my_process not running."
-    fi
-elif [ "${1}" == "restart" ]; then
-    if [ -e "/var/run/my_process.pid" ]; then
-        PID=$(cat /var/run/my_process.pid)
-        kill "${PID}"
-        rm /var/run/my_process.pid
-        ./manage_my_process &
-        echo "$!" > /var/run/my_process.pid
-        echo "manage_my_process restarted"
-    else
-        echo "No running process found. Starting manage_my_process."
-        ./manage_my_process &
-        echo "$!" > /var/run/my_process.pid
-        echo "manage_my_process started"
-    fi
+elif [ "${1}" == "stop" ]
+then
+    echo "manage_my_process stopped"
+    kill "$(cat /var/run/my_process.pid)"
+    rm /var/run/my_process.pid
+elif [ "${1}" == "restart" ]
+then
+    kill "$(cat /var/run/my_process.pid)"
+    rm /var/run/my_process.pid
+    ./manage_my_process &
+    touch /var/run/my_process.pid
+    echo "$!" > /var/run/my_process.pid
+    echo "manage_my_process restarted"
 else
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: manage_my_process {start|stop|restart}"
 fi
