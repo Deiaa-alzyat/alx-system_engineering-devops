@@ -6,7 +6,6 @@
 
 /**
  * infinite_while - Run an infinite while loop.
- *
  * Return: This function never returns.
  */
 int infinite_while(void)
@@ -15,44 +14,31 @@ int infinite_while(void)
 	{
 		sleep(1);
 	}
+	return (0);
 }
 
 /**
  * main - Creates five zombie processes.
- *
  * Return: Always 0.
  */
 int main(void)
 {
 	pid_t pid;
-	int cnt = 0;
+	char count = 0;
 
-	while (cnt < 5)
+	while (count < 5)
 	{
 		pid = fork();
 		if (pid > 0)
 		{
-			printf("Parent: Zombie process created, PID: %d\n", pid);
-			cnt++;
-		}
-		else if (pid == 0)
-		{
-			printf("Child: PID: %d\n", getpid());
-			exit(0);
+			printf("Zombie process created, PID: %d\n", pid);
+			sleep(1);
+			count++;
 		}
 		else
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
+			exit(0);
 	}
 
-	/* Parent process waits for all children to exit */
-	while (wait(NULL) > 0)
-		;
-
-	/* Infinite loop to keep the process alive */
 	infinite_while();
 
 	return (EXIT_SUCCESS);
-}
