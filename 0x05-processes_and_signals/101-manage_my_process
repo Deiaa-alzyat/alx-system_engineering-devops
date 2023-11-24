@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Manages the 'manage_my_process' script, allowing for starting, stopping, and restarting the process.
+
+# When invoked with the argument 'start':
+#   1. Initiates the 'manage_my_process' script.
+#   2. Creates a file at '/var/run/my_process.pid' containing its PID.
+#   3. Outputs "manage_my_process started."
+
+# When invoked with the argument 'stop':
+#   1. Halts the 'manage_my_process' script.
+#   2. Removes the file at '/var/run/my_process.pid.'
+#   3. Outputs "manage_my_process stopped."
+
+# When invoked with the argument 'restart':
+#   1. Stops the 'manage_my_process' script.
+#   2. Deletes the file '/var/run/my_process.pid.'
+#   3. Restarts 'manage_my_process.'
+#   4. Creates a new file at '/var/run/my_process.pid' containing its PID.
+#   5. Outputs "manage_my_process restarted."
+
+# If any other or no arguments are provided:
+#   Outputs "Usage: manage_my_process {start|stop|restart}."
+
+
+if [ "${1}" == "start" ]; then
+    ./manage_my_process &
+    echo "$!" > /var/run/my_process.pid
+    echo "manage_my_process started"
+elif [ "${1}" == "stop" ]; then
+    if [ -e "/var/run/my_process.pid" ]; then
+        PID=$(cat /var/run/my_process.pid)
+        kill "${PID}"
+        rm /var/run/my_process.pid
+        echo "manage_my_process stopped"
+    else
+        echo "No running process found. manage_my_process not running."
+    fi
+elif [ "${1}" == "restart" ]; then
+    if [ -e "/var/run/my_process.pid" ]; then
+        PID=$(cat /var/run/my_process.pid)
+        kill "${PID}"
+        rm /var/run/my_process.pid
+        ./manage_my_process &
+        echo "$!" > /var/run/my_process.pid
+        echo "manage_my_process restarted"
+    else
+        echo "No running process found. Starting manage_my_process."
+        ./manage_my_process &
+        echo "$!" > /var/run/my_process.pid
+        echo "manage_my_process started"
+    fi
+else
+    echo "Usage: $0 {start|stop|restart}"
+fi
